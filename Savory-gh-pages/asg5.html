@@ -1,0 +1,216 @@
+﻿<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd"><html><head></head><body>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div class="container-fluid main-container">
+
+
+
+
+
+
+
+
+
+
+
+<div class="fluid-row">
+
+
+
+<h1 class="title toc-ignore">Assignment 5</h1>
+<h4 class="author"><em>Thomas Hamming</em></h4>
+<h4 class="date"><em>May 3, 2017</em></h4>
+
+</div>
+
+
+<pre class="r"><code>library(tidyverse)</code></pre>
+<pre><code>## Loading tidyverse: ggplot2
+## Loading tidyverse: tibble
+## Loading tidyverse: tidyr
+## Loading tidyverse: readr
+## Loading tidyverse: purrr
+## Loading tidyverse: dplyr</code></pre>
+<pre><code>## Conflicts with tidy packages ----------------------------------------------</code></pre>
+<pre><code>## filter(): dplyr, stats
+## lag():    dplyr, stats</code></pre>
+<pre class="r"><code>a5data = read.csv(&quot;Assignment5_data.csv&quot;)
+
+str(a5data)</code></pre>
+<pre><code>## &#39;data.frame&#39;:    150 obs. of  23 variables:
+##  $ duration         : int  430 320 434 301 250 164 238 484 228 338 ...
+##  $ study            : int  30 13 35 15 20 6 20 15 14 30 ...
+##  $ work             : int  10 12 0 0 40 8 20 12 0 0 ...
+##  $ commute.time     : int  5 25 30 0 5 2 8 30 12 10 ...
+##  $ commute.mode     : Factor w/ 6 levels &quot;Bicycle&quot;,&quot;Car&quot;,..: 6 4 2 4 2 6 4 4 6 6 ...
+##  $ deadlines        : num  4 1 1 5 2 2 2 2 1 5 ...
+##  $ time.mgmt        : num  5 1 1 5 2 2 1 2 1 5 ...
+##  $ socialmedia.hours: num  30 10 14 10 4 10 10 5 9 10 ...
+##  $ socialmedia.class: num  1 2 2 4 2 1 4 4 4 2 ...
+##  $ device.type      : Factor w/ 3 levels &quot;Desktop computer&quot;,..: 2 2 3 2 2 2 2 2 2 2 ...
+##  $ device.os        : Factor w/ 4 levels &quot;Android&quot;,&quot;iOS&quot;,..: 4 3 4 4 4 3 4 2 4 3 ...
+##  $ device.virus     : Factor w/ 3 levels &quot;Maybe&quot;,&quot;No&quot;,&quot;Yes&quot;: 2 3 1 2 2 3 2 2 2 2 ...
+##  $ group.projects   : int  7 2 3 3 10 3 2 2 0 1 ...
+##  $ leadership       : num  3 4 2 4 2 2 2 4 2 5 ...
+##  $ google.docs      : num  1 2 2 4 1 2 1 2 1 5 ...
+##  $ chat             : num  2 4 2 2 1 2 1 1 1 5 ...
+##  $ d2l.sus          : num  87.5 70 75 65 85 92.5 82.5 85 87.5 65 ...
+##  $ gender           : Factor w/ 3 levels &quot;Man&quot;,&quot;Not listed, please specify:&quot;,..: 3 3 3 1 3 3 3 3 3 3 ...
+##  $ age              : int  22 18 22 19 22 20 20 23 19 21 ...
+##  $ gpa              : num  3.93 3.37 3.6 3 2.3 3.2 3.2 3.75 4 3.2 ...
+##  $ credits          : int  13 15 12 18 13 12 16 9 15 14 ...
+##  $ graduate         : Factor w/ 10 levels &quot;Fall 2017&quot;,&quot;Fall 2018&quot;,..: 6 4 5 9 6 6 6 6 7 6 ...
+##  $ english          : logi  FALSE FALSE FALSE FALSE TRUE TRUE ...</code></pre>
+<div class="section level2">
+<h2>Background</h2>
+<p>The reason for the data collection was to learn more about MSU students’use of technology and social media, their workload, their time management skills, and their opinions on d2l. The data was collected by Dr.&#160;Emilee Rader between March and April 2017. SONA systems was used for recruiting the participants, and the survey was given using Qualtrics. The survey consisted of multiple fill in the blank and multiple choice questions.</p>
+</div>
+<div class="section level2">
+<h2>Characteristics of Data Set</h2>
+<p>This data set contains 23 columns/variables, and 150 rows/observations. Each participant surveyed has 1 response to each question, creating one row in a column.</p>
+</div>
+<div class="section level2">
+<h2>Types of Variables</h2>
+<p>There are 13 categorical variables, of which 1 is dichotomous, 6 are nominal, and 6 are ordinal. There are 10 numerical variables of which 3 are continuous, and 7 are discrete. The first variable, duration, is simply how long it took to take the survey. The first few questions are numerical values based on the amount of time spent on school activities during the week. The next group of questions are categorical, based on time-management ability and methodology. The following 2 questions are about usage of social media, which are followed by 3 questions on device usage. Another group of questions is about group work in school, and how it is done. The next group of questions is to create a single variable, a value from 0-100 rating how usable d2l is. The final set of questions are more generic and about age, gpa, etc.</p>
+</div>
+<div class="section level2">
+<h2>Variation In Variables</h2>
+<p>The first variable I chose to look at was commute.mode. It is a categorical variable containing different methods students use to get to class. I decided to look at how many participants used each method, and what percentage of students that was.</p>
+<pre class="r"><code>a5data %&gt;% 
+  group_by(commute.mode) %&gt;%
+  summarize(num.mode = n()) %&gt;%
+  mutate(percent.mode = num.mode/150*100)</code></pre>
+<pre><code>## # A tibble: 6 &#215; 3
+##            commute.mode num.mode percent.mode
+##                  &lt;fctr&gt;    &lt;int&gt;        &lt;dbl&gt;
+## 1               Bicycle        3    2.0000000
+## 2                   Car       65   43.3333333
+## 3                 Other        1    0.6666667
+## 4 Public Transportation       24   16.0000000
+## 5               Scooter       11    7.3333333
+## 6                  Walk       46   30.6666667</code></pre>
+<pre class="r"><code>ggplot(data=a5data) + geom_bar(aes(commute.mode)) + ggtitle(&quot;How do you get to class?&quot;) +
+  xlab(&quot;Commute Method&quot;) + ylab(&quot;Number of students&quot;)</code></pre>
+<p><img src="javascript://" width="672"/></p>
+<p>Commute method shows which method a student uses to get around, the y axis shows numbert of students who chose that method. What I found most surprising about these results was the number of people using cars, as I don’t know anyone who drives to class.</p>
+<p>The second variable I wanted to learn more about was english. This is a categorical variable that shows whether the student taking the survey is a native english speaker or not. Once again, I chose to find the number of students who gave each answer, and what percent of students that was.</p>
+<pre class="r"><code>a5data %&gt;% 
+  group_by(english) %&gt;%
+  summarize(num.eng = n()) %&gt;%
+  mutate(percent.eng = num.eng/150*100)</code></pre>
+<pre><code>## # A tibble: 2 &#215; 3
+##   english num.eng percent.eng
+##     &lt;lgl&gt;   &lt;int&gt;       &lt;dbl&gt;
+## 1   FALSE      26    17.33333
+## 2    TRUE     124    82.66667</code></pre>
+<pre class="r"><code>ggplot(data=a5data) + geom_bar(aes(english)) +
+  ggtitle(&quot;Is english your native language?&quot;) + xlab(&quot;English First Language?&quot;) +
+  ylab(&quot;Number of Students&quot;)</code></pre>
+<p><img src="javascript://" width="672"/></p>
+<p>The x axis variables are whether english is their first language, TRUE for yes and FALSE for no. The y axis is the number of students. I was actually surprised by this data. From my experience (although it’s just anecdotal evidence), international students seem more likely to live farther off campus. I figured maybe that is why so many students said they drive to class. However, it seems nearly 90% of the particpants are native english speakers.</p>
+<p>The study variable is a numeric variable containing the number of hours each participant said they study each week. I calculated the mean/average amount, as well as the max number of hours students said they studied.</p>
+<pre class="r"><code>mean = mean(a5data$study)
+max = max(a5data$study)</code></pre>
+<pre class="r"><code>a5data %&gt;%
+  ggplot() + geom_histogram(aes(study), bins = 40) +
+  ggtitle(&quot;Study Habits&quot;) + xlab(&quot;Number of Hours&quot;) + ylab(&quot;Number of Students&quot;)</code></pre>
+<p><img src="javascript://" width="672"/></p>
+<p>The x axis is the number of hours per week students spend studying, the y axis is the number of students who gave the same answer. I wasn’t surprised to see peaks on the 10,20,30, etc. as that is how I would answer this question. It seems right to me, except for the few people who say 40 hours per week, that seems crazy to me.</p>
+<p>The d2l.sus variable is a numeric variable containing a score out of 100 ranking the usability of d2l. The score is based on a number of questions asked to each study participant. I found the mean and minimum answers to this survey.</p>
+<pre class="r"><code>print(&#39;mean&#39;)</code></pre>
+<pre><code>## [1] &quot;mean&quot;</code></pre>
+<pre class="r"><code>mean(a5data$d2l.sus)</code></pre>
+<pre><code>## [1] 80.35</code></pre>
+<pre class="r"><code>print(&#39;minimum&#39;)</code></pre>
+<pre><code>## [1] &quot;minimum&quot;</code></pre>
+<pre class="r"><code>min(a5data$d2l.sus)</code></pre>
+<pre><code>## [1] 17.5</code></pre>
+<pre class="r"><code>a5data %&gt;%
+  filter(d2l.sus &gt; 30) %&gt;%
+  ggplot() + geom_histogram(aes(d2l.sus), bins = 50) + 
+  ggtitle(&quot;d2l Usability Ratings&quot;) + xlab(&quot;Rating Score&quot;) + ylab(&quot;Number of People&quot;)</code></pre>
+<p><img src="javascript://" width="672"/></p>
+<p>The x axis is the usability score of d2l based on the answers students gave to the survey. The y axis is the number of people who ended up with each score. I removed the lowest score as it was an outlier. This data really surprised me, as I agree more with the outlier I removed from the graph than with all the people who ended up with 100. I changed <code>bins = 50</code> in order to space the graph out more.</p>
+</div>
+<div class="section level2">
+<h2>Relationships Among Variables</h2>
+<p>I want to know whether more organized people are busier, less busy, or just as busy as unorganized people. I think we naturally think of organized people as smarter, or harder working, but I want to see if that is actually the case.</p>
+<pre class="r"><code>mgmt1 = a5data %&gt;% filter(time.mgmt == 1) %&gt;% select(study)
+mgmt5 = a5data %&gt;% filter(time.mgmt == 5) %&gt;% select(study)
+t.test(mgmt1$study, mgmt5$study)</code></pre>
+<pre><code>## 
+##  Welch Two Sample t-test
+## 
+## data:  mgmt1$study and mgmt5$study
+## t = -0.3223, df = 11.619, p-value = 0.753
+## alternative hypothesis: true difference in means is not equal to 0
+## 95 percent confidence interval:
+##  -7.821184  5.811882
+## sample estimates:
+## mean of x mean of y 
+##  13.89535  14.90000</code></pre>
+<p>From the t test, you can see that there is almost no difference in study habits between very organized and very unorganized people, as the t = -.3 and the p value is nearly 1.</p>
+<pre class="r"><code>a5data$time.mgmt = factor(a5data$time.mgmt)
+a5data %&gt;%
+  filter(study &lt; 35) %&gt;%
+  ggplot(aes(y = study, x = time.mgmt)) + geom_boxplot() +
+  ggtitle(&quot;Who studies more, organized or unorganized people?&quot;) +
+  xlab(&quot;How organized the student is (1 is most organized)&quot;) + 
+  ylab(&quot;Hours Spent Studying&quot;) + theme_bw()</code></pre>
+<p><img src="javascript://" width="672"/></p>
+<p>On the x-axis, 1 means most organized while 5 means least organized. The y-axis is the number of hours spent studying each week. There doesn’t seem to be any difference in study habits between organized and disorganized people. Organized people are not more studying inclined, nor are unorganized people less or more likely to study for any reason. The distributions and means were almost exactly the same for each organizational rating.</p>
+</div>
+
+
+
+
+</div>
+
+
+
+
+
+
+
+
+<script type="text/javascript" src="/d2l/common/math/MathML.js?v=10.7.7.8809-195 "></script><script type="text/javascript">document.addEventListener('DOMContentLoaded', function() { D2LMathML.DesktopInit('https://s.brightspace.com/lib/mathjax/2.6.1/MathJax.js?config=MML_HTMLorMML','https://s.brightspace.com/lib/mathjax/2.6.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML'); });</script></body></html>
